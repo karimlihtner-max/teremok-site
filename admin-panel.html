@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора - Детский сад ТЕРЕМОК</title>
+    <link rel="icon" type="image/jpeg" href="Fon.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+    <!-- X-Frame-Options устанавливается через JavaScript в security.js -->
+    <!-- Content-Security-Policy может быть установлен через meta, но для полной защиты рекомендуется использовать HTTP заголовки -->
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <div class="admin-header-content">
+                <h1>⚙️ Панель администратора</h1>
+                <div class="admin-header-actions">
+                    <span id="admin-username"></span>
+                    <a href="index.html" class="btn-secondary">На сайт</a>
+                    <button onclick="logout()" class="btn-danger">Выйти</button>
+                </div>
+            </div>
+        </header>
+        
+        <nav class="admin-nav">
+            <button class="admin-nav-btn active" onclick="showAdminSection('applications', this)">📋 Заявки</button>
+            <button class="admin-nav-btn" onclick="showAdminSection('kindergarten', this)">🏢 Информация о саде</button>
+            <button class="admin-nav-btn" onclick="showAdminSection('groups', this)">👥 Группы</button>
+            <button class="admin-nav-btn" onclick="showAdminSection('schedule', this)">📅 Расписание</button>
+            <button class="admin-nav-btn" onclick="showAdminSection('events', this)">🎉 Мероприятия</button>
+            <button class="admin-nav-btn" onclick="showAdminSection('awards', this)">🏆 Награды</button>
+            <button class="admin-nav-btn" onclick="showAdminSection('settings', this)">🔧 Настройки</button>
+        </nav>
+        
+        <main class="admin-main">
+            <!-- Секция заявок -->
+            <section id="admin-applications" class="admin-section active">
+                <h2>Заявки на поступление</h2>
+                <div class="admin-controls">
+                    <button onclick="exportApplications()" class="btn-primary">📥 Экспорт в CSV</button>
+                    <button onclick="clearApplications()" class="btn-danger">🗑️ Очистить все</button>
+                </div>
+                <div id="applications-list" class="applications-list"></div>
+            </section>
+            
+            <!-- Секция информации о саде -->
+            <section id="admin-kindergarten" class="admin-section">
+                <h2>Информация о детском саде</h2>
+                <form id="kindergarten-form" class="admin-form">
+                    <div class="form-group">
+                        <label for="kg-name">Название</label>
+                        <input type="text" id="kg-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="kg-address">Адрес</label>
+                        <input type="text" id="kg-address" name="address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="kg-phone">Телефон</label>
+                        <input type="tel" id="kg-phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="kg-email">Email</label>
+                        <input type="email" id="kg-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="kg-description">Описание</label>
+                        <textarea id="kg-description" name="description" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">💾 Сохранить изменения</button>
+                </form>
+            </section>
+            
+            <!-- Секция групп -->
+            <section id="admin-groups" class="admin-section">
+                <h2>Управление группами</h2>
+                <div class="admin-controls">
+                    <button onclick="addGroup()" class="btn-primary">➕ Добавить группу</button>
+                </div>
+                <div id="groups-admin-list" class="groups-admin-list"></div>
+            </section>
+            
+            <!-- Секция расписания -->
+            <section id="admin-schedule" class="admin-section">
+                <h2>Управление расписанием</h2>
+                <div class="admin-controls">
+                    <label for="schedule-group-select-admin">Группа:</label>
+                    <select id="schedule-group-select-admin">
+                        <option value="all">Все группы</option>
+                    </select>
+                    <button onclick="addScheduleItem()" class="btn-primary">➕ Добавить пункт</button>
+                </div>
+                <div id="schedule-admin-list" class="schedule-admin-list"></div>
+            </section>
+            
+            <!-- Секция мероприятий -->
+            <section id="admin-events" class="admin-section">
+                <h2>Управление мероприятиями</h2>
+                <div class="admin-controls">
+                    <button onclick="addEvent()" class="btn-primary">➕ Добавить мероприятие</button>
+                </div>
+                <div id="events-admin-list" class="events-admin-list"></div>
+            </section>
+            
+            <!-- Секция наград -->
+            <section id="admin-awards" class="admin-section">
+                <h2>Управление наградами</h2>
+                <div class="admin-controls">
+                    <button onclick="addAward()" class="btn-primary">➕ Добавить награду</button>
+                </div>
+                <div id="awards-admin-list" class="awards-admin-list"></div>
+            </section>
+            
+            <!-- Секция настроек -->
+            <section id="admin-settings" class="admin-section">
+                <h2>Настройки системы</h2>
+                <div class="settings-section">
+                    <h3>Изменение пароля администратора</h3>
+                    <form id="password-form" class="admin-form">
+                        <div class="form-group">
+                            <label for="old-password">Текущий пароль</label>
+                            <input type="password" id="old-password" name="old-password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-password">Новый пароль</label>
+                            <input type="password" id="new-password" name="new-password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">Подтвердите пароль</label>
+                            <input type="password" id="confirm-password" name="confirm-password" required>
+                        </div>
+                        <button type="submit" class="btn-primary">🔐 Изменить пароль</button>
+                    </form>
+                </div>
+                <div class="settings-section">
+                    <h3>Экспорт/Импорт данных</h3>
+                    <div class="admin-controls">
+                        <button onclick="exportAllData()" class="btn-primary">📥 Экспорт всех данных</button>
+                        <label for="import-file" class="btn-secondary">📤 Импорт данных
+                            <input type="file" id="import-file" accept=".json" style="display: none;" onchange="importData(event)">
+                        </label>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>Информация о системе</h3>
+                    <div class="system-info">
+                        <p><strong>Версия:</strong> 1.0.0</p>
+                        <p><strong>Последнее обновление:</strong> <span id="last-update"></span></p>
+                        <p><strong>Всего заявок:</strong> <span id="total-applications">0</span></p>
+                        <p><strong>Время входа:</strong> <span id="login-time"></span></p>
+                        <p><strong>Время последней активности:</strong> <span id="last-activity"></span></p>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>Логи безопасности</h3>
+                    <div class="admin-controls">
+                        <button onclick="viewSecurityLogs()" class="btn-primary">📋 Просмотр логов входа</button>
+                        <button onclick="clearSecurityLogs()" class="btn-danger">🗑️ Очистить логи</button>
+                    </div>
+                    <div id="security-logs-container" style="margin-top: 20px;"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Модальные окна -->
+    <div id="modal-overlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modal-title">Заголовок</h2>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Содержимое модального окна -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="security.js"></script>
+    <script src="loadXML.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестирование безопасности - Детский сад ТЕРЕМОК</title>
+    <link rel="icon" type="image/jpeg" href="Fon.jpg">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section h2 {
+            color: #f5576c;
+            border-bottom: 2px solid #f5576c;
+            padding-bottom: 10px;
+        }
+        .test-item {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+        .test-item.failed {
+            border-left-color: #f44336;
+        }
+        .test-item.warning {
+            border-left-color: #ff9800;
+        }
+        .test-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #45a049;
+        }
+        .test-button.danger {
+            background: #f44336;
+        }
+        .test-button.danger:hover {
+            background: #da190b;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .result.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔒 Тестирование безопасности системы администрирования</h1>
+    
+    <div class="test-section">
+        <h2>1. Тест хранения учетных данных</h2>
+        <div class="test-item">
+            <strong>Проблема:</strong> Пароли хранятся в localStorage в открытом виде
+            <div class="result warning">
+⚠️ УЯЗВИМОСТЬ: Пароль администратора хранится в localStorage без шифрования.
+Любой скрипт на странице может получить доступ к паролю.
+            </div>
+            <button class="test-button" onclick="testCredentialsStorage()">Проверить хранение паролей</button>
+            <div id="credentials-result"></div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Тест защиты сессии</h2>
+        <div class="test-item">
+            <strong>Проблема:</strong> Сессия проверяется только при загрузке страницы
+            <div class="result warning">
+⚠️ УЯЗВИМОСТЬ: После входа можно изменить sessionStorage вручную и получить доступ.
+            </div>
+            <button class="test-button" onclick="testSessionBypass()">Проверить обход сессии</button>
+            <div id="session-result"></div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Тест защиты от брутфорса</h2>
+        <div class="test-item">
+            <strong>Проблема:</strong> Нет ограничений на количество попыток входа
+            <div class="result error">
+❌ КРИТИЧЕСКАЯ УЯЗВИМОСТЬ: Можно бесконечно пытаться подобрать пароль.
+            </div>
+            <button class="test-button" onclick="testBruteForce()">Проверить защиту от брутфорса</button>
+            <div id="bruteforce-result"></div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Тест таймаута сессии</h2>
+        <div class="test-item">
+            <strong>Проблема:</strong> Сессия не истекает автоматически
+            <div class="result warning">
+⚠️ УЯЗВИМОСТЬ: Сессия остается активной до закрытия браузера.
+            </div>
+            <button class="test-button" onclick="testSessionTimeout()">Проверить таймаут сессии</button>
+            <div id="timeout-result"></div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>5. Тест XSS уязвимостей</h2>
+        <div class="test-item">
+            <strong>Проблема:</strong> Пользовательский ввод может содержать вредоносный код
+            <div class="result warning">
+⚠️ УЯЗВИМОСТЬ: Нет санитизации пользовательского ввода.
+            </div>
+            <button class="test-button" onclick="testXSS()">Проверить защиту от XSS</button>
+            <div id="xss-result"></div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>6. Тест прямого доступа к админ-панели</h2>
+        <div class="test-item">
+            <strong>Проблема:</strong> Можно попытаться открыть админ-панель напрямую
+            <button class="test-button" onclick="testDirectAccess()">Проверить прямой доступ</button>
+            <div id="direct-access-result"></div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>7. Отчет о безопасности</h2>
+        <button class="test-button" onclick="generateSecurityReport()">Сгенерировать отчет</button>
+        <div id="security-report"></div>
+    </div>
+    
+    <script>
+        function testCredentialsStorage() {
+            const result = document.getElementById('credentials-result');
+            const credentials = localStorage.getItem('adminCredentials');
+            
+            if (credentials) {
+                const creds = JSON.parse(credentials);
+                result.innerHTML = `
+                    <div class="result error">
+❌ КРИТИЧЕСКАЯ УЯЗВИМОСТЬ ОБНАРУЖЕНА!
+
+Логин: ${creds.username}
+Пароль: ${creds.password}
+
+Пароль хранится в открытом виде в localStorage.
+Любой JavaScript на странице может получить к нему доступ:
+<code>localStorage.getItem('adminCredentials')</code>
+                    </div>
+                `;
+            } else {
+                result.innerHTML = `
+                    <div class="result success">
+✓ Учетные данные не найдены в localStorage
+                    </div>
+                `;
+            }
+        }
+        
+        function testSessionBypass() {
+            const result = document.getElementById('session-result');
+            const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+            
+            result.innerHTML = `
+                <div class="result warning">
+⚠️ УЯЗВИМОСТЬ ОБНАРУЖЕНА!
+
+Текущее состояние сессии: ${isLoggedIn || 'не авторизован'}
+
+Можно обойти проверку авторизации, выполнив в консоли:
+<code>sessionStorage.setItem('adminLoggedIn', 'true');
+sessionStorage.setItem('adminUsername', 'admin');
+window.location.href = 'admin-panel.html';</code>
+
+Защита: Сессия проверяется только при загрузке страницы, 
+но не при каждом действии.
+                </div>
+            `;
+        }
+        
+        function testBruteForce() {
+            const result = document.getElementById('bruteforce-result');
+            const attempts = localStorage.getItem('loginAttempts') || '0';
+            
+            result.innerHTML = `
+                <div class="result error">
+❌ КРИТИЧЕСКАЯ УЯЗВИМОСТЬ ОБНАРУЖЕНА!
+
+Количество попыток входа: ${attempts}
+
+ПРОБЛЕМЫ:
+1. Нет ограничения на количество попыток входа
+2. Нет блокировки после нескольких неудачных попыток
+3. Нет задержки между попытками
+4. Можно автоматизировать подбор пароля
+
+РЕКОМЕНДАЦИЯ: Добавить ограничение на 5 попыток с блокировкой на 15 минут
+                </div>
+            `;
+        }
+        
+        function testSessionTimeout() {
+            const result = document.getElementById('timeout-result');
+            const loginTime = sessionStorage.getItem('adminLoginTime');
+            
+            if (loginTime) {
+                const elapsed = Math.floor((Date.now() - parseInt(loginTime)) / 1000 / 60);
+                result.innerHTML = `
+                    <div class="result warning">
+⚠️ УЯЗВИМОСТЬ ОБНАРУЖЕНА!
+
+Время входа: ${new Date(parseInt(loginTime)).toLocaleString()}
+Прошло времени: ${elapsed} минут
+
+ПРОБЛЕМЫ:
+1. Сессия не истекает автоматически
+2. Нет таймаута неактивности
+3. Сессия остается активной до закрытия браузера
+
+РЕКОМЕНДАЦИЯ: Добавить таймаут сессии (30 минут неактивности)
+                    </div>
+                `;
+            } else {
+                result.innerHTML = `
+                    <div class="result warning">
+⚠️ Время входа не сохраняется. Невозможно отследить длительность сессии.
+                    </div>
+                `;
+            }
+        }
+        
+        function testXSS() {
+            const result = document.getElementById('xss-result');
+            result.innerHTML = `
+                <div class="result warning">
+⚠️ ПОТЕНЦИАЛЬНАЯ УЯЗВИМОСТЬ
+
+Проверьте следующие места:
+1. Поля ввода в формах (заявки, группы, мероприятия)
+2. Отображение пользовательских данных
+3. URL параметры
+
+Тестовый XSS код:
+<code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code>
+<code>&lt;img src=x onerror=alert('XSS')&gt;</code>
+
+РЕКОМЕНДАЦИЯ: Использовать textContent вместо innerHTML для пользовательских данных
+                </div>
+            `;
+        }
+        
+        function testDirectAccess() {
+            const result = document.getElementById('direct-access-result');
+            const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+            
+            if (isLoggedIn === 'true') {
+                result.innerHTML = `
+                    <div class="result success">
+✓ Вы авторизованы. Проверка доступа работает.
+                    </div>
+                `;
+            } else {
+                result.innerHTML = `
+                    <div class="result success">
+✓ Вы не авторизованы. Попытка прямого доступа будет перенаправлена на страницу входа.
+                    </div>
+                `;
+            }
+        }
+        
+        function generateSecurityReport() {
+            const report = document.getElementById('security-report');
+            const credentials = localStorage.getItem('adminCredentials');
+            const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+            const loginAttempts = localStorage.getItem('loginAttempts') || '0';
+            
+            let vulnerabilities = [];
+            let recommendations = [];
+            
+            // Проверка хранения паролей
+            if (credentials) {
+                vulnerabilities.push('❌ Пароли хранятся в открытом виде в localStorage');
+                recommendations.push('Использовать хеширование паролей (bcrypt, SHA-256)');
+            }
+            
+            // Проверка защиты от брутфорса
+            if (parseInt(loginAttempts) < 5) {
+                vulnerabilities.push('❌ Нет защиты от брутфорса');
+                recommendations.push('Добавить ограничение на 5 попыток входа с блокировкой на 15 минут');
+            }
+            
+            // Проверка таймаута сессии
+            if (!sessionStorage.getItem('adminLoginTime')) {
+                vulnerabilities.push('⚠️ Нет отслеживания времени сессии');
+                recommendations.push('Добавить таймаут сессии (30 минут неактивности)');
+            }
+            
+            // Проверка защиты сессии
+            vulnerabilities.push('⚠️ Сессия проверяется только при загрузке страницы');
+            recommendations.push('Добавить периодическую проверку сессии и защиту от манипуляций');
+            
+            report.innerHTML = `
+                <div class="result ${vulnerabilities.length > 3 ? 'error' : 'warning'}">
+                    <h3>📊 ОТЧЕТ О БЕЗОПАСНОСТИ</h3>
+                    <p><strong>Дата проверки:</strong> ${new Date().toLocaleString('ru-RU')}</p>
+                    <p><strong>Статус авторизации:</strong> ${isLoggedIn === 'true' ? 'Авторизован' : 'Не авторизован'}</p>
+                    
+                    <h4>🔴 Обнаруженные уязвимости (${vulnerabilities.length}):</h4>
+                    <ul>
+                        ${vulnerabilities.map(v => `<li>${v}</li>`).join('')}
+                    </ul>
+                    
+                    <h4>💡 Рекомендации по улучшению:</h4>
+                    <ul>
+                        ${recommendations.map(r => `<li>${r}</li>`).join('')}
+                        <li>Добавить логирование попыток входа</li>
+                        <li>Использовать HTTPS для передачи данных</li>
+                        <li>Добавить защиту от CSRF токенами</li>
+                        <li>Реализовать двухфакторную аутентификацию (опционально)</li>
+                    </ul>
+                    
+                    <h4>📈 Оценка безопасности:</h4>
+                    <p><strong>${vulnerabilities.length <= 2 ? 'Высокая' : vulnerabilities.length <= 4 ? 'Средняя' : 'Низкая'}</strong></p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
+
+
+

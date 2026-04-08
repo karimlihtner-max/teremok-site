@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Администрирование - Детский сад ТЕРЕМОК</title>
+    <link rel="icon" type="image/jpeg" href="Fon.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- X-Frame-Options устанавливается через JavaScript в security.js -->
+    <!-- Content-Security-Policy может быть установлен через meta, но для полной защиты рекомендуется использовать HTTP заголовки -->
+    <style>
+        body {
+            font-family: var(--font-sans);
+        }
+        .login-container {
+            max-width: 450px;
+            margin: 100px auto;
+            background: var(--surface-page);
+            backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 22px;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header h1 {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-group label {
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        
+        .form-group input {
+            padding: 12px 15px;
+            border: 2px solid var(--border-subtle);
+            border-radius: var(--border-radius-sm);
+            font-size: 1em;
+            font-family: inherit;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(107, 92, 231, 0.15);
+        }
+        
+        .login-button {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            border-radius: 999px;
+            font-size: 1.05em;
+            font-weight: 800;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+            box-shadow: var(--shadow-button);
+        }
+        
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(107, 92, 231, 0.35);
+        }
+        
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #ef5350;
+            display: none;
+            margin-bottom: 20px;
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .back-link a {
+            color: #f5576c;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .back-link a:hover {
+            color: #d43f5a;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>🔐 Администрирование</h1>
+            <p>Детский сад "ТЕРЕМОК"</p>
+        </div>
+        
+        <div id="error-message" class="error-message"></div>
+        
+        <form id="login-form" class="login-form" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="username">Логин</label>
+                <input type="text" id="username" name="username" required autocomplete="username">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+            </div>
+            
+            <button type="submit" class="login-button">Войти</button>
+        </form>
+        
+        <div class="back-link">
+            <a href="index.html">← Вернуться на сайт</a>
+        </div>
+    </div>
+    
+    <script src="security.js"></script>
+    <script>
+        // Простая функция хеширования пароля (SHA-256)
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        
+        // Проверка блокировки из-за неудачных попыток
+        function checkLoginBlocked() {
+            const blockData = localStorage.getItem('loginBlocked');
+            if (!blockData) return false;
+            
+            const block = JSON.parse(blockData);
+            const now = Date.now();
+            
+            if (now < block.until) {
+                const minutesLeft = Math.ceil((block.until - now) / 60000);
+                return { blocked: true, minutesLeft };
+            } else {
+                // Блокировка истекла, очищаем
+                localStorage.removeItem('loginBlocked');
+                localStorage.removeItem('loginAttempts');
+                return false;
+            }
+        }
+        
+        // Регистрация неудачной попытки входа
+        function recordFailedAttempt() {
+            let attempts = parseInt(localStorage.getItem('loginAttempts') || '0');
+            attempts++;
+            localStorage.setItem('loginAttempts', attempts.toString());
+            
+            // Блокируем после 5 неудачных попыток на 15 минут
+            if (attempts >= 5) {
+                const blockUntil = Date.now() + (15 * 60 * 1000); // 15 минут
+                localStorage.setItem('loginBlocked', JSON.stringify({
+                    until: blockUntil,
+                    attempts: attempts
+                }));
+                return true; // Заблокировано
+            }
+            return false;
+        }
+        
+        // Очистка попыток при успешном входе
+        function clearLoginAttempts() {
+            localStorage.removeItem('loginAttempts');
+            localStorage.removeItem('loginBlocked');
+        }
+        
+        // Инициализация: устанавливаем дефолтные учетные данные, если их нет
+        if (!localStorage.getItem('adminCredentials')) {
+            // Хешируем пароль по умолчанию
+            hashPassword('admin123').then(hashedPassword => {
+                localStorage.setItem('adminCredentials', JSON.stringify({
+                    username: 'admin',
+                    passwordHash: hashedPassword // Сохраняем хеш вместо пароля
+                }));
+            });
+        }
+        
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error-message');
+            
+            // Проверяем блокировку
+            const blockCheck = checkLoginBlocked();
+            if (blockCheck && blockCheck.blocked) {
+                errorDiv.textContent = `Доступ заблокирован из-за множественных неудачных попыток. Попробуйте через ${blockCheck.minutesLeft} минут.`;
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            const credentials = JSON.parse(localStorage.getItem('adminCredentials'));
+            
+            // Хешируем введенный пароль и сравниваем с сохраненным хешем
+            const passwordHash = await hashPassword(password);
+            const isPasswordCorrect = credentials.passwordHash ? 
+                passwordHash === credentials.passwordHash : 
+                password === credentials.password; // Обратная совместимость
+            
+            if (username === credentials.username && isPasswordCorrect) {
+                // Очищаем неудачные попытки
+                clearLoginAttempts();
+                
+                // Сохраняем сессию с временем входа
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                sessionStorage.setItem('adminUsername', username);
+                sessionStorage.setItem('adminLoginTime', Date.now().toString());
+                sessionStorage.setItem('adminLastActivity', Date.now().toString());
+                
+                // Логируем успешный вход
+                const loginLog = JSON.parse(localStorage.getItem('adminLoginLog') || '[]');
+                loginLog.push({
+                    username: username,
+                    time: new Date().toISOString(),
+                    success: true,
+                    ip: 'local' // В реальном приложении получать с сервера
+                });
+                // Храним только последние 50 записей
+                if (loginLog.length > 50) loginLog.shift();
+                localStorage.setItem('adminLoginLog', JSON.stringify(loginLog));
+                
+                // Перенаправляем на панель администратора
+                window.location.href = 'admin-panel.html';
+            } else {
+                // Регистрируем неудачную попытку
+                const isBlocked = recordFailedAttempt();
+                
+                // Логируем неудачную попытку
+                const loginLog = JSON.parse(localStorage.getItem('adminLoginLog') || '[]');
+                loginLog.push({
+                    username: username,
+                    time: new Date().toISOString(),
+                    success: false,
+                    ip: 'local'
+                });
+                if (loginLog.length > 50) loginLog.shift();
+                localStorage.setItem('adminLoginLog', JSON.stringify(loginLog));
+                
+                if (isBlocked) {
+                    errorDiv.textContent = 'Слишком много неудачных попыток. Доступ заблокирован на 15 минут.';
+                } else {
+                    const attempts = parseInt(localStorage.getItem('loginAttempts') || '0');
+                    const remaining = 5 - attempts;
+                    errorDiv.textContent = `Неверный логин или пароль. Осталось попыток: ${remaining}`;
+                }
+                errorDiv.style.display = 'block';
+                
+                // Скрываем ошибку через 5 секунд
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>
+
+

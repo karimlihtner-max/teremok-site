@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Детский сад ТЕРЕМОК - забота о развитии, здоровье и счастье детей">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Детский сад ТЕРЕМОК</title>
+    <link rel="icon" type="image/jpeg" href="Fon.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- preload для data.xml убран, так как вызывает CORS ошибку при file:// протоколе -->
+    <!-- Данные загружаются через JavaScript с автоматическим fallback на встроенные данные -->
+    <link rel="preload" href="Fon.jpg" as="image">
+    <!-- X-Frame-Options устанавливается через JavaScript в security.js -->
+    <!-- Content-Security-Policy может быть установлен через meta, но для полной защиты рекомендуется использовать HTTP заголовки -->
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <span class="logo-window"></span>
+                    </div>
+                    <div class="logo-text">
+                        <h1 id="kindergarten-name" class="logo-title">ТЕРЕМОК</h1>
+                        <span class="logo-subtitle">детский сад</span>
+                    </div>
+                </div>
+                <div class="contact-info">
+                    <p><strong>Адрес:</strong> <span id="address">Загрузка...</span></p>
+                    <p><strong>Телефон:</strong> <span id="phone">Загрузка...</span></p>
+                    <p><strong>Email:</strong> <span id="email">Загрузка...</span></p>
+                    <p class="social-link">
+                        <a href="https://vk.com/cadteremok124" target="_blank" rel="noopener noreferrer" class="vk-link" title="Мы в ВКонтакте">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.785 16.241s.336-.041.509-.25c.101-.14.098-.401.098-.401s-.014-1.045.45-1.199c.459-.15 1.044.999 1.664 1.44.467.333.819.26.819.26l1.664-.024s.87-.055.457-.74c-.034-.054-.243-.51-1.245-1.443-1.052-.98-.908-.82.355-2.513.243-.325.426-.684.426-.684s.218-.65-.19-1.15c-.14-.17-.35-.28-.73-.35-.29-.05-.62-.03-.62-.03l-1.73.01s-.129-.016-.224.03c-.094.044-.154.15-.154.15s-.277.74-.645 1.37c-.776 1.33-1.086 1.4-1.214 1.32-.296-.19-.222-.77-.222-1.18 0-1.28.198-1.81-.388-1.95-.195-.047-.338-.08-.838-.085-.64-.006-1.18.002-1.485.006-.153.002-.265.016-.342.033-.095.021-.166.047-.166.047s-.124.08-.085.247c.033.14.112.47.193.81.25 1.05.585 1.97.585 1.97s.033.2-.05.31c-.083.11-.247.15-.247.15l-1.75-.01s-.52.015-.71.25c-.05.06-.08.15-.08.15s-.06.3.14.62c.55.88 1.18 1.68 1.18 1.68s.11.18.09.29c-.02.11-.15.15-.15.15l-.52.03s-.39.02-.54-.12c-.15-.14-.29-.42-.29-.42s-.25-.67-.35-.94c-.09-.25-.2-.21-.2-.21l-.4.01s-.3.01-.39.15c-.09.14-.01.43-.01.43s.78 1.85 1.66 2.78c.81.85 1.81.79 1.81.79h.43s.31-.02.47-.23c.09-.12.09-.28.09-.28s-.01-.51.22-.73c.22-.22.51-.15.51-.15l1.22.01z"/>
+                            </svg>
+                            <span>Мы в ВКонтакте</span>
+                        </a>
+                    </p>
+                </div>
+            </div>
+            <p class="description" id="description">Загрузка...</p>
+        </header>
+        
+        <nav class="tabs">
+            <button type="button" class="tab-button active" data-section="home" onclick="showSection('home')">Главная</button>
+            <button type="button" class="tab-button" data-section="parents" onclick="showSection('parents')">Родителям</button>
+            <button type="button" class="tab-button" data-section="groups" onclick="showSection('groups')">Группы</button>
+            <button type="button" class="tab-button" data-section="schedule" onclick="showSection('schedule')">Расписание</button>
+            <button type="button" class="tab-button" data-section="events" onclick="showSection('events')">Мероприятия</button>
+            <button type="button" class="tab-button" data-section="gallery" onclick="showSection('gallery')">📸 Галерея</button>
+            <button type="button" class="tab-button" data-section="awards" onclick="showSection('awards')">Награды</button>
+            <button type="button" class="tab-button" data-section="application" onclick="showSection('application')">Заявка</button>
+        </nav>
+        
+        <section id="home" class="content-section active">
+            <div class="home-hero">
+                <h2 class="home-hero-title">Добро пожаловать в «Теремок»</h2>
+                <p class="home-hero-text">Здесь собрано самое важное для родителей: новости, ближайшие события и быстрые переходы по разделам сайта.</p>
+                <div class="home-actions">
+                    <button type="button" class="btn-home-primary" onclick="showSection('application')">Подать заявку в очередь</button>
+                    <button type="button" class="btn-home-secondary" onclick="showSection('parents')">Как к нам попасть</button>
+                    <button type="button" class="btn-home-secondary" onclick="showSection('groups')">Наши группы</button>
+                </div>
+            </div>
+            <div class="home-two-col">
+                <div class="home-block">
+                    <h3 class="home-block-title">Новости и жизнь сада</h3>
+                    <div class="news-grid">
+                        <article class="news-card">
+                            <span class="news-card-date">Март 2026</span>
+                            <h4 class="news-card-heading">Набор в группы</h4>
+                            <p>Принимаем заявки в очередь на следующий учебный год. Все вопросы можно задать по телефону или через форму на сайте.</p>
+                        </article>
+                        <article class="news-card">
+                            <span class="news-card-date">Март 2026</span>
+                            <h4 class="news-card-heading">Занятия на свежем воздухе</h4>
+                            <p>Гуляем ежедневно в любую погоду в соответствии с режимом дня. Не забудьте сменную обувь и метку на одежде.</p>
+                        </article>
+                        <article class="news-card">
+                            <span class="news-card-date">Март 2026</span>
+                            <h4 class="news-card-heading">ВКонтакте</h4>
+                            <p>Фотографии и объявления публикуем в группе ВК — ссылка в шапке и внизу страницы. Подключайтесь, чтобы не пропустить праздники.</p>
+                        </article>
+                    </div>
+                </div>
+                <div class="home-block">
+                    <h3 class="home-block-title">Ближайшие мероприятия</h3>
+                    <div id="home-upcoming-events" class="home-upcoming-list">
+                        <p class="home-muted">Загрузка…</p>
+                    </div>
+                    <button type="button" class="btn-home-link" onclick="showSection('events')">Все мероприятия →</button>
+                </div>
+            </div>
+        </section>
+        
+        <section id="parents" class="content-section">
+            <h2>Родителям</h2>
+            <p class="parents-intro">Коротко о том, как устроен приём, режим и куда писать, если остались вопросы.</p>
+            
+            <div class="parents-grid">
+                <section class="parents-card" aria-labelledby="parents-admission-title">
+                    <h3 id="parents-admission-title">Как к нам попасть</h3>
+                    <ol class="parents-steps">
+                        <li>Оставьте заявку в разделе «Заявка» или позвоните в сад — подскажем свободные места и очередь.</li>
+                        <li>Подготовьте документы: свидетельство о рождении, паспорт законного представителя, медицинскую карту (ф.026/у), СНИЛС ребёнка.</li>
+                        <li>После приглашения заключите договор и пройдите беседу с заведующим и медсестрой.</li>
+                    </ol>
+                    <button type="button" class="btn-home-primary" onclick="showSection('application')">Перейти к заявке</button>
+                </section>
+                <section class="parents-card" aria-labelledby="parents-mode-title">
+                    <h3 id="parents-mode-title">Режим, питание, всё включено</h3>
+                    <ul class="parents-list">
+                        <li><strong>Часы работы:</strong> будни, примерно 07:30–19:00 (уточняйте по телефону — зависит от графика группы).</li>
+                        <li><strong>Питание:</strong> 4-разовое согласно меню; аллергии и диеты сообщайте при оформлении.</li>
+                        <li><strong>Стоимость:</strong> зависит от льгот и договора — актуальные суммы только в бухгалтерии сада.</li>
+                    </ul>
+                </section>
+                <section class="parents-card parents-card-wide" aria-labelledby="parents-map-title">
+                    <h3 id="parents-map-title">Как нас найти</h3>
+                    <p>Адрес совпадает с блоком контактов в шапке сайта. Откройте карту и постройте маршрут в один клик.</p>
+                    <a id="parents-map-link" class="btn-map" href="#" target="_blank" rel="noopener noreferrer">Открыть на карте (Яндекс)</a>
+                </section>
+            </div>
+            
+            <h3 class="faq-heading">Частые вопросы</h3>
+            <div class="faq-list">
+                <details class="faq-item">
+                    <summary>Сколько длится адаптация?</summary>
+                    <p>Обычно 2–3 недели по индивидуальному графику. Педагог не спешит — важно, чтобы ребёнку было спокойно.</p>
+                </details>
+                <details class="faq-item">
+                    <summary>Что взять с собой в первый день?</summary>
+                    <p>Сменную обувь, форму или удобную одежду, любимую игрушку по желанию. Всё подпишите фамилией и инициалами.</p>
+                </details>
+                <details class="faq-item">
+                    <summary>Как сообщить о болезни?</summary>
+                    <p>Позвоните в группу или заведующему утром. После простудных заболеваний нужна справка от врача по правилам Роспотребнадзора.</p>
+                </details>
+                <details class="faq-item">
+                    <summary>Можно ли забрать ребёнка раньше?</summary>
+                    <p>Да, сообщите воспитателю заранее или в начале дня — подготовят вещи и передадут без очереди.</p>
+                </details>
+            </div>
+            
+            <h3 class="reviews-heading">Отзывы родителей</h3>
+            <div class="reviews-grid">
+                <figure class="review-card">
+                    <blockquote>«Сын ходит с удовольствием: много игр на свежем воздухе, воспитатели всегда на связи в рабочее время.»</blockquote>
+                    <figcaption>— Екатерина Н., младшая группа</figcaption>
+                </figure>
+                <figure class="review-card">
+                    <blockquote>«Организация праздников на высоте, дочка каждый раз с нетерпением ждёт утренники.»</blockquote>
+                    <figcaption>— Андрей В., средняя группа</figcaption>
+                </figure>
+                <figure class="review-card">
+                    <blockquote>«Нравится чистота, питание и то, что про развитие ребёнка отчёты не формальные, а по делу.»</blockquote>
+                    <figcaption>— Ольга М., старшая группа</figcaption>
+                </figure>
+            </div>
+        </section>
+        
+        <section id="groups" class="content-section">
+            <h2>Группы детского сада</h2>
+            <div class="search-controls">
+                <div class="search-group">
+                    <label for="group-search">🔍 Поиск группы по названию:</label>
+                    <input type="text" id="group-search" placeholder="Введите название группы..." oninput="searchGroups(this.value)" autocomplete="off">
+                    <button onclick="clearGroupSearch()" class="clear-search-btn" id="clear-group-search" style="display: none;">✕</button>
+                </div>
+                <div class="search-group">
+                    <label for="child-search">👶 Поиск ребенка по ФИО:</label>
+                    <input type="text" id="child-search" placeholder="Введите имя или фамилию ребенка..." oninput="searchChildren(this.value)" autocomplete="off">
+                    <button onclick="clearChildSearch()" class="clear-search-btn" id="clear-child-search" style="display: none;">✕</button>
+                </div>
+            </div>
+            <div id="search-results-info" class="search-results-info" style="display: none;"></div>
+            <div id="groups-content">Загрузка данных...</div>
+        </section>
+        
+        <section id="schedule" class="content-section">
+            <h2>Расписание дня</h2>
+            <div class="schedule-controls">
+                <label for="schedule-group-select">Группа:</label>
+                <select id="schedule-group-select">
+                    <option value="all">Все группы</option>
+                </select>
+                <label for="schedule-day-select">День:</label>
+                <select id="schedule-day-select">
+                    <option value="all">Все дни</option>
+                </select>
+            </div>
+            <p id="schedule-note" class="home-muted" style="display:none;"></p>
+            <div class="schedule-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>День</th>
+                            <th>Время</th>
+                            <th>Активность</th>
+                        </tr>
+                    </thead>
+                    <tbody id="schedule-content">
+                        <tr><td colspan="3">Загрузка данных...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <section id="events" class="content-section">
+            <h2>Предстоящие мероприятия</h2>
+            <div class="events-list" id="events-content">
+                <p>Загрузка данных...</p>
+            </div>
+        </section>
+        
+        <section id="gallery" class="content-section">
+            <h2>📸 Фотогалерея</h2>
+            <div class="gallery-controls">
+                <label for="gallery-filter">Фильтр:</label>
+                <select id="gallery-filter">
+                    <option value="all">Все фотографии</option>
+                    <option value="building">Здание садика</option>
+                    <option value="activities">Активности детей</option>
+                    <option value="events">Мероприятия</option>
+                    <option value="groups">Группы</option>
+                </select>
+            </div>
+            <div class="gallery-grid" id="gallery-content">
+                <p>Загрузка фотографий...</p>
+            </div>
+        </section>
+        
+        <section id="awards" class="content-section">
+            <h2>Награды и достижения детского сада</h2>
+            <div class="awards-grid">
+                <!-- Награды загружаются динамически через JavaScript -->
+            </div>
+        </section>
+        
+        <section id="application" class="content-section">
+            <h2>Подать заявку в очередь</h2>
+            <div class="application-form-container">
+                <form id="application-form" onsubmit="handleApplication(event)">
+                    <div class="form-group">
+                        <label for="child-name">Имя ребенка *</label>
+                        <input type="text" id="child-name" name="child-name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="child-surname">Фамилия ребенка *</label>
+                        <input type="text" id="child-surname" name="child-surname" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="child-age">Возраст ребенка *</label>
+                        <input type="number" id="child-age" name="child-age" min="1" max="7" step="0.1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="parent-name">ФИО родителя/опекуна *</label>
+                        <input type="text" id="parent-name" name="parent-name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="parent-phone">Телефон родителя *</label>
+                        <input type="tel" id="parent-phone" name="parent-phone" placeholder="+7 (XXX) XXX-XX-XX" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="parent-email">Email родителя</label>
+                        <input type="email" id="parent-email" name="parent-email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="preferred-group">Предпочтительная группа</label>
+                        <select id="preferred-group" name="preferred-group">
+                            <option value="">Выберите группу</option>
+                            <option value="1">Младшая группа "Солнышко" (2-3 года)</option>
+                            <option value="2">Средняя группа "Радуга" (3-4 года)</option>
+                            <option value="3">Старшая группа "Звездочки" (4-5 лет)</option>
+                            <option value="4">Подготовительная группа "Умники" (5-6 лет)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="comments">Дополнительная информация</label>
+                        <textarea id="comments" name="comments" rows="4" placeholder="Укажите любую дополнительную информацию о ребенке или особые пожелания"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="application-file">Прикрепить файл (по желанию)</label>
+                        <input type="file" id="application-file" name="application-file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.txt">
+                        <small>Максимальный размер файла: 2 МБ</small>
+                    </div>
+                    
+                    <button type="submit" class="submit-button">Отправить заявку</button>
+                </form>
+                
+                <div id="application-result" class="application-result" style="display: none;"></div>
+            </div>
+        </section>
+    </div>
+    
+    <footer class="site-footer">
+        <div class="footer-contact-grid">
+            <p><strong>Адрес:</strong> <span id="footer-address">—</span></p>
+            <p><strong>Телефон:</strong> <a id="footer-phone-link" href="#"><span id="footer-phone">—</span></a></p>
+            <p><strong>Email:</strong> <a id="footer-email-link" href="#"><span id="footer-email">—</span></a></p>
+        </div>
+        <p class="footer-copy">&copy; 2026 Детский сад «ТЕРЕМОК». Все права защищены.</p>
+        <div class="footer-links-row">
+            <a href="https://vk.com/cadteremok124" target="_blank" rel="noopener noreferrer" class="vk-link-footer" title="Мы в ВКонтакте">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.785 16.241s.336-.041.509-.25c.101-.14.098-.401.098-.401s-.014-1.045.45-1.199c.459-.15 1.044.999 1.664 1.44.467.333.819.26.819.26l1.664-.024s.87-.055.457-.74c-.034-.054-.243-.51-1.245-1.443-1.052-.98-.908-.82.355-2.513.243-.325.426-.684.426-.684s.218-.65-.19-1.15c-.14-.17-.35-.28-.73-.35-.29-.05-.62-.03-.62-.03l-1.73.01s-.129-.016-.224.03c-.094.044-.154.15-.154.15s-.277.74-.645 1.37c-.776 1.33-1.086 1.4-1.214 1.32-.296-.19-.222-.77-.222-1.18 0-1.28.198-1.81-.388-1.95-.195-.047-.338-.08-.838-.085-.64-.006-1.18.002-1.485.006-.153.002-.265.016-.342.033-.095.021-.166.047-.166.047s-.124.08-.085.247c.033.14.112.47.193.81.25 1.05.585 1.97.585 1.97s.033.2-.05.31c-.083.11-.247.15-.247.15l-1.75-.01s-.52.015-.71.25c-.05.06-.08.15-.08.15s-.06.3.14.62c.55.88 1.18 1.68 1.18 1.68s.11.18.09.29c-.02.11-.15.15-.15.15l-.52.03s-.39.02-.54-.12c-.15-.14-.29-.42-.29-.42s-.25-.67-.35-.94c-.09-.25-.2-.21-.2-.21l-.4.01s-.3.01-.39.15c-.09.14-.01.43-.01.43s.78 1.85 1.66 2.78c.81.85 1.81.79 1.81.79h.43s.31-.02.47-.23c.09-.12.09-.28.09-.28s-.01-.51.22-.73c.22-.22.51-.15.51-.15l1.22.01z"/>
+                </svg>
+                <span>Мы в ВКонтакте</span>
+            </a>
+            <a href="admin.html" style="color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 0.9em;">⚙️ Администрирование</a>
+        </div>
+    </footer>
+    
+    <!-- Модальное окно для информации о ребенке -->
+    <div id="child-modal" class="modal">
+        <div class="modal-content" id="child-modal-content">
+            <!-- Содержимое будет добавлено динамически -->
+        </div>
+    </div>
+    
+    <!-- Модальное окно для просмотра фотографии -->
+    <div id="photo-modal" class="modal">
+        <div class="modal-content photo-modal-content">
+            <span class="close-modal" onclick="closePhotoModal()">&times;</span>
+            <img id="modal-photo" src="" alt="Фотография">
+            <div class="photo-info">
+                <h3 id="photo-title"></h3>
+                <p id="photo-description"></p>
+                <p id="photo-date"></p>
+            </div>
+            <button class="modal-nav prev" onclick="navigatePhoto(-1)">❮</button>
+            <button class="modal-nav next" onclick="navigatePhoto(1)">❯</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно для подробностей мероприятия -->
+    <div id="event-modal" class="modal">
+        <div class="modal-content" id="event-modal-content">
+            <!-- Содержимое будет добавлено динамически -->
+        </div>
+    </div>
+    
+    <script src="security.js"></script>
+    <script src="loadXML.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Дополнительная защита при загрузке страницы
+        if (typeof window !== 'undefined' && window.SecurityModule) {
+            window.SecurityModule.initSecurity();
+        }
+    </script>
+</body>
+</html>
+
